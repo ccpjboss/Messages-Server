@@ -1,15 +1,17 @@
 #ifndef LISTS_H_INCLUDED
 #define LISTS_H_INCLUDED
 #include <stdbool.h> 
+#include <stdlib.h>
 
-struct Utilizador
+typedef struct Utilizador
 {
-    char email [256];
-    char password [20];
-    bool admin;
-    int codigo_user;
+   //char email [256];
+    //char password [20];
+    //bool admin;
+    //int codigo_user;
     struct Utilizador *proximo;
-};
+    int valor;
+}Utilizador_t;
 
 struct Date
 {
@@ -18,26 +20,23 @@ struct Date
     int ano;
 };
 
-struct Mensagem
+typedef struct Mensagem
 {
   struct Date data;
   int codigo_user;
   char text[256]; 
   bool lida;
   struct Mensagem *proximo;
-};
+}Mensagem_t;
 
-struct Lista
+typedef struct Lista
 {
     struct Mensagem *cabeca_m;
     struct Utilizador *cabeca_u;
-};
+}Lista_t;
 
-struct Lista inicia(struct Lista a );
-
-
-
-
-
+void inicia_lista(Lista_t *const list);
+void printUtilizadors(Utilizador_t *const node);
+void insereUser(Lista_t *list);
 
 #endif
