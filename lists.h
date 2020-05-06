@@ -5,12 +5,11 @@
 
 typedef struct Utilizador
 {
-   //char email [256];
-    //char password [20];
-    //bool admin;
-    //int codigo_user;
+    char email [256];
+    char password [20];
+    bool admin;
+    int codigo_user;
     struct Utilizador *proximo;
-    int valor;
 }Utilizador_t;
 
 struct Date
@@ -37,6 +36,6 @@ typedef struct Lista
 
 void inicia_lista(Lista_t *const list);
 void printUtilizadors(Utilizador_t *const node);
-void insereUser(Lista_t *list);
+void insereUser(int socket_fd, Lista_t *list);
 
 #endif
