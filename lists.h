@@ -22,7 +22,9 @@ struct Date
 typedef struct Mensagem
 {
   struct Date data;
-  int codigo_user;
+  int codigo_user_r; //codigo_user remetente
+  int codigo_user_d; //codigo_user destinatario
+  int msgid; //ID da mensagem
   char text[256]; 
   bool lida;
   struct Mensagem *proximo;
