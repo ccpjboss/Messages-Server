@@ -1,11 +1,12 @@
 #include "lists.h"
+#include "menu.h"
 #include <stdio.h> 
 #include <netdb.h> 
 #include <netinet/in.h> 
 #include <stdlib.h> 
 #include <string.h> 
 #include <sys/socket.h> 
-#include <sys/types.h> 
+#include <sys/types.h>
 #define MAX 80 
 #define PORT 8080 
 #define SA struct sockaddr 
@@ -36,7 +37,7 @@ int main(int argc, char const *argv[])
 		exit(0); 
 	} 
 	else
-		printf("Socket successfully binded..\n"); 
+		printf("Socket successfully binded...\n"); 
 
 	// Now server is ready to listen and verification 
 	if ((listen(sockfd, 5)) != 0) { 
@@ -44,22 +45,32 @@ int main(int argc, char const *argv[])
 		exit(0); 
 	} 
 	else
-		printf("Server listening..\n"); 
-	len = sizeof(cli); 
+		printf("Server listening...\n"); 
 
-	// Accept the data packet from client and verification 
-	connfd = accept(sockfd, (SA*)&cli, &len); 
-	if (connfd < 0) { 
-		printf("server acccept failed...\n"); 
-		exit(0); 
-	} 
-	else
-		printf("server acccept the client...\n"); 
+	while(1){
+		len = sizeof(cli); 
+		// Accept the data packet from client and verification 
+		connfd = accept(sockfd, (SA*)&cli, &len); 
+		if (connfd < 0) { 
+			printf("server acccept failed...\n"); 
+			exit(0); 
+		} 
+		else
+			printf("server acccept the client...\n"); 
+			if(fork() == 0){
+				//login(connfd);
+				menu_admin(connfd);
+				close(sockfd);
+				exit(0);
+			}
+			close(connfd);
 
-    Lista_t *Lista = (Lista_t *) malloc(sizeof(Lista_t));
+	}
+    /*Lista_t *Lista = (Lista_t *) malloc(sizeof(Lista_t));
     inicia_lista(Lista);
     insereUser(connfd,Lista);
     insereUser(connfd, Lista);
-    printUtilizadors(Lista->cabeca_u);
-    return 0;
+    printUtilizadors(Lista->cabeca_u);*/
+    
+	return 0;
 }

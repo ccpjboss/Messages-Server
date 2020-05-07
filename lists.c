@@ -40,7 +40,7 @@ void insereUser(int socket_fd, Lista_t *list)
   strcpy(new->password,buff2);
 
   new->admin = false;
-new->codigo_user = 1; //TODO: Think about user code
+  new->codigo_user = 1; //TODO: Think about user code
   new->proximo = NULL;
 
   if ( list->cabeca_u == NULL)

@@ -6,47 +6,32 @@
 #include <stdio.h>
 #include <netdb.h>
 #include <string.h>
+#include "lists.h"
 
-void login();
-void menu_admin();
-void menu_utilizador();
 
-void login(){
-    char username;
-    char password;
-    
-    while (1)
-    {
-      printf("Username : ");
-      scanf("%s",username); 
+void login(int clientfd){
+    char msg_send1 [] = "Insira o seu email: ";
+    char msg_send2 [] = "Insira a palavra passe: ";
+    char buff[256];
+    char buff2[20];
+    char username[256];
+    char password[20];
 
-      if(username = ""){
-          printf("Não insira campos vazios");
-      }
-      else
-      {
-          break;
-      }
-      
-    }
+    write(clientfd,msg_send1,sizeof(msg_send1));
+    bzero(buff,256);
+    read(clientfd,buff,sizeof(buff));
+    buff[strcspn(buff,"\n")] = 0;
+    strcpy(username,buff);
 
-    while (1)
-    {
-      printf("Password: ");
-      scanf("%s",password); 
-
-      if(password = ""){
-          printf("Não insira campos vazios");
-      }
-      else
-      {
-          break;
-      }
-      
-    }
-    
+    write(clientfd,msg_send2,sizeof(msg_send2));
+    bzero(buff2,20);
+    read(clientfd,buff2,sizeof(buff2));
+    buff2[strcspn(buff2,"\n")] = 0;
+    strcpy(password,buff2);
+    printf("1");
     if(!strcmp(username, "Admin") && !strcmp(password, "admin")){
-        //menu admin
+        printf("2");
+        menu_admin(clientfd);
     }
 
     /*Verificar se o utilizador existe
@@ -54,42 +39,70 @@ void login(){
     
 }
 
-void menu_admin(){
-    int op;
-    printf("*****Menu Administrador*****");
-    printf("1-Registar Novo Utilizador");
-    printf("2-Apagar Utilizador Existente");
-    printf("Indique a opção pretendida:");
-    scanf("%d",op);
+void menu_admin(int clientfd){
+    char buff[20];
+    char op[20];
 
+    char msg1[]="*****Menu Administrador*****\n";
+    char msg2[]="1-Registar Novo Utilizador\n";
+    char msg3[]="2-Apagar Utilizador Existente\n";
+    char msg4[]="Indique a opção pretendida:";
     
-    switch (op)
+    write(clientfd,msg1,sizeof(msg1));
+    write(clientfd,msg2,sizeof(msg2));
+    write(clientfd,msg3,sizeof(msg3));
+    write(clientfd,msg4,sizeof(msg4));
+     bzero(buff,20);
+    read(clientfd,buff,sizeof(buff));
+    buff[strcspn(buff,"\n")] = 0;
+   
+    strcpy(op,buff);
+    int i = atoi(op);
+   
+    switch (i)
     {
-        case 1:
-            //Cria novo utilizador
+        case 1: ;
+            Lista_t *Lista = (Lista_t *) malloc(sizeof(Lista_t));
+            inicia_lista(Lista);
+            insereUser(clientfd,Lista);
+            printUtilizadors(Lista->cabeca_u);
             break;
         case 2:
             //Apaga Utilizador
             break;
         default:
-            printf("Opção Inválida");
+            char msg5[]="Opção Inválida";
+            write(clientfd,msg5,sizeof(msg5));
             break;
     }
 
 }
 
-void menu_utilizador(){
-    int op;
-    printf("*****Menu Utilizador*****");
-    printf("1-Verificar se existem mensagens enviadas por outros utilizadores");
-    printf("2-Ler mensagens");
-    printf("3-Enviar mensagem");
-    printf("4-Apagar mensagens lidas");
-    printf("Indique a opção pretendida:");
-    scanf("%d",op);
+void menu_utilizador(int clientfd){
+    char buff[20];
+    char op[20]; 
 
+    char msg1[]="*****Menu Utilizador*****\n";
+    char msg2[]="1-Verificar se existem mensagens enviadas por outros utilizadores\n";
+    char msg3[]="2-Ler mensagens\n";
+    char msg4[]="3-Enviar mensagem\n";
+    char msg5[]="4-Apagar mensagens lidas\n";
+    char msg6[]="Indique a opção pretendida:";
+
+    write(clientfd,msg1,sizeof(msg1));
+    write(clientfd,msg2,sizeof(msg2));
+    write(clientfd,msg3,sizeof(msg3));
+    write(clientfd,msg4,sizeof(msg4));
+    write(clientfd,msg5,sizeof(msg5));
+    write(clientfd,msg6,sizeof(msg6));
+     bzero(buff,20);
+    read(clientfd,buff,sizeof(buff));
+    buff[strcspn(buff,"\n")] = 0;
+
+    strcpy(op,buff);
+    int i = atoi(op);
     
-    switch (op)
+    switch (i)
     {
         case 1:
             /* code */
@@ -102,7 +115,8 @@ void menu_utilizador(){
             break;
 
         default:
-            printf("Opção Inválida");
+            char msg7[]="Opção Inválida";
+            write(clientfd,msg7,sizeof(msg7));
             break;
     }
 }
