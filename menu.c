@@ -8,10 +8,10 @@
 #include <string.h>
 #include "lists.h"
 
-
-void login(int clientfd){
-    char msg_send1 [] = "Insira o seu email: ";
-    char msg_send2 [] = "Insira a palavra passe: ";
+void login(int clientfd)
+{
+    char msg_send1[] = "Insira o seu email: ";
+    char msg_send2[] = "Insira a palavra passe: ";
     char buff[256];
     char buff2[20];
     char username[256];
@@ -35,10 +35,10 @@ void login(int clientfd){
 
     /*Verificar se o utilizador existe
     caso exista -> menu utilizador*/
-    
 }
 
-void menu_admin(int clientfd){
+void menu_admin(int clientfd)
+{
     char buff[20];
     char op[20];
     int i;
@@ -89,10 +89,10 @@ void menu_admin(int clientfd){
 
             break;
     }
-
 }
 
-void menu_utilizador(int clientfd){
+void menu_utilizador(int clientfd)
+{
     char buff[20];
     char op[20]; 
     int i;
@@ -131,15 +131,15 @@ void menu_utilizador(int clientfd){
 
     switch (i)
     {
-        case 1:
-            /* code */
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            break;
+    case 1:
+        /* code */
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
 
         default:
     

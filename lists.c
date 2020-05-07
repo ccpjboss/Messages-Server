@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void inicia_lista(Lista_t * list)
+void inicia_lista(Lista_t *list)
 {
   list->cabeca_m = NULL;
   list->cabeca_u = NULL;
@@ -18,7 +18,7 @@ void printUtilizadors(Utilizador_t *node)
   }
 }
 
-bool verificaDupUser(Lista_t *list, char *email)
+bool verificaUser(Lista_t *list, char *email)
 {
   bool dup = false;
   Utilizador_t *atual = list->cabeca_u;
@@ -36,16 +36,19 @@ void insereUser(int socket_fd, Lista_t *list)
   Utilizador_t *new = (Utilizador_t *)malloc(sizeof(Utilizador_t));
   Utilizador_t *atual = list->cabeca_u;
 
-  char msg_send1 [] = "Insira o email: ";
-  char msg_send2 [] = "Insira a palavra passe: ";
+  char msg_send1[] = "Insira o email: ";
+  char msg_send2[] = "Insira a palavra passe: ";
   char buff[256];
   char buff2[20];
 
-  write(socket_fd, msg_send1, sizeof(msg_send1)); //Envia mensagem de input para o cliente
-  bzero(buff, 256);                               //Coloca o buffer a 0
-  read(socket_fd, buff, sizeof(buff));            //Le o input do cliente
-  buff[strcspn(buff, "\r\n")] = 0;
-  strcpy(new->email, buff); //Copia para a variavel da struct
+  do
+  {
+    write(socket_fd, msg_send1, sizeof(msg_send1)); //Envia mensagem de input para o cliente
+    bzero(buff, 256);                               //Coloca o buffer a 0
+    read(socket_fd, buff, sizeof(buff));            //Le o input do cliente
+    buff[strcspn(buff, "\r\n")] = 0;
+    strcpy(new->email, buff); //Copia para a variavel da struct
+  } while (verificaUser(list, new->email));
 
   write(socket_fd, msg_send2, sizeof(msg_send2));
   bzero(buff2, 20);
@@ -60,7 +63,7 @@ void insereUser(int socket_fd, Lista_t *list)
   if (list->cabeca_u == NULL) //Se a cabeça for igual a NULL então new vai ser o primeiro nó
   {
     list->cabeca_u = new;
-    new->proximo = NULL;
+    return;
   }
   else
   {
@@ -69,6 +72,6 @@ void insereUser(int socket_fd, Lista_t *list)
       atual = atual->proximo;
     }
     atual->proximo = new;
-    new->proximo = NULL;
+    return;
   }
 }
