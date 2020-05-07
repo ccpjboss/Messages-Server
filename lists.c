@@ -23,7 +23,7 @@ void insereUser(int socket_fd, Lista_t *list)
   Utilizador_t *new = (Utilizador_t *)malloc(sizeof(Utilizador_t));
   Utilizador_t *atual = list->cabeca_u;
 
-  char msg_send1 [] = "Insira o seu email: ";
+  char msg_send1 [] = "Insira o email: ";
   char msg_send2 [] = "Insira a palavra passe: ";
   char buff[256];
   char buff2[20];
