@@ -71,7 +71,7 @@ void menu_admin(int clientfd){
             //Apaga Utilizador
             break;
         default:
-            char msg5[]="Opção Inválida";
+            char msg5[]="Opção Inválida\n";
             write(clientfd,msg5,sizeof(msg5));
             break;
     }
@@ -115,7 +115,7 @@ void menu_utilizador(int clientfd){
             break;
 
         default:
-            char msg7[]="Opção Inválida";
+            char msg7[]="Opção Inválida\n";
             write(clientfd,msg7,sizeof(msg7));
             break;
     }
