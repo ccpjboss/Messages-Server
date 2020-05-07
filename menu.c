@@ -20,17 +20,16 @@ void login(int clientfd){
     write(clientfd,msg_send1,sizeof(msg_send1));
     bzero(buff,256);
     read(clientfd,buff,sizeof(buff));
-    buff[strcspn(buff,"\n")] = 0;
+    buff[strcspn(buff,"\r\n")] = 0;
     strcpy(username,buff);
 
     write(clientfd,msg_send2,sizeof(msg_send2));
     bzero(buff2,20);
     read(clientfd,buff2,sizeof(buff2));
-    buff2[strcspn(buff2,"\n")] = 0;
+    buff2[strcspn(buff2,"\r\n")] = 0;
     strcpy(password,buff2);
-    printf("1");
+
     if(!strcmp(username, "Admin") && !strcmp(password, "admin")){
-        printf("2");
         menu_admin(clientfd);
     }
 
@@ -42,26 +41,42 @@ void login(int clientfd){
 void menu_admin(int clientfd){
     char buff[20];
     char op[20];
+    int i;
 
+    char msg[]="\n";
     char msg1[]="*****Menu Administrador*****\n";
     char msg2[]="1-Registar Novo Utilizador\n";
     char msg3[]="2-Apagar Utilizador Existente\n";
     char msg4[]="Indique a opção pretendida:";
     
+    write(clientfd,msg,sizeof(msg));
     write(clientfd,msg1,sizeof(msg1));
     write(clientfd,msg2,sizeof(msg2));
     write(clientfd,msg3,sizeof(msg3));
-    write(clientfd,msg4,sizeof(msg4));
-     bzero(buff,20);
-    read(clientfd,buff,sizeof(buff));
-    buff[strcspn(buff,"\n")] = 0;
-   
-    strcpy(op,buff);
-    int i = atoi(op);
+    
+    while(1){
+        write(clientfd,msg4,sizeof(msg4));
+        bzero(buff,20);
+        read(clientfd,buff,sizeof(buff));
+        buff[strcspn(buff,"\r\n")] = 0;
+        strcpy(op,buff);
+        i = atoi(op);
+        
+        if(i==1 || i==2){
+            break;
+        }
+        else{
+            char msg5[]="Opção inválida\n";
+            write(clientfd,msg5,sizeof(msg5));
+        }
+    }
    
     switch (i)
     {
         case 1: ;
+            char msg[]="\n";
+            write(clientfd,msg,sizeof(msg));
+
             Lista_t *Lista = (Lista_t *) malloc(sizeof(Lista_t));
             inicia_lista(Lista);
             insereUser(clientfd,Lista);
@@ -71,8 +86,7 @@ void menu_admin(int clientfd){
             //Apaga Utilizador
             break;
         default:
-            char msg5[]="Opção Inválida\n";
-            write(clientfd,msg5,sizeof(msg5));
+
             break;
     }
 
@@ -81,7 +95,9 @@ void menu_admin(int clientfd){
 void menu_utilizador(int clientfd){
     char buff[20];
     char op[20]; 
+    int i;
 
+    char msg[]="\n";
     char msg1[]="*****Menu Utilizador*****\n";
     char msg2[]="1-Verificar se existem mensagens enviadas por outros utilizadores\n";
     char msg3[]="2-Ler mensagens\n";
@@ -89,19 +105,30 @@ void menu_utilizador(int clientfd){
     char msg5[]="4-Apagar mensagens lidas\n";
     char msg6[]="Indique a opção pretendida:";
 
+    write(clientfd,msg,sizeof(msg));
     write(clientfd,msg1,sizeof(msg1));
     write(clientfd,msg2,sizeof(msg2));
     write(clientfd,msg3,sizeof(msg3));
     write(clientfd,msg4,sizeof(msg4));
     write(clientfd,msg5,sizeof(msg5));
-    write(clientfd,msg6,sizeof(msg6));
-     bzero(buff,20);
-    read(clientfd,buff,sizeof(buff));
-    buff[strcspn(buff,"\n")] = 0;
-
-    strcpy(op,buff);
-    int i = atoi(op);
     
+    while(1){
+        write(clientfd,msg6,sizeof(msg6));
+        bzero(buff,20);
+        read(clientfd,buff,sizeof(buff));
+        buff[strcspn(buff,"\r\n")] = 0;
+        strcpy(op,buff);
+        i = atoi(op);
+        
+        if(i==1 || i==2 || i==3 || i==4){
+            break;
+        }
+        else{
+            char msg7[]="Opção inválida\n";
+            write(clientfd,msg7,sizeof(msg7));
+        }
+    }
+
     switch (i)
     {
         case 1:
@@ -115,8 +142,7 @@ void menu_utilizador(int clientfd){
             break;
 
         default:
-            char msg7[]="Opção Inválida\n";
-            write(clientfd,msg7,sizeof(msg7));
+    
             break;
     }
 }

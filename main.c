@@ -72,7 +72,7 @@ int main(int argc, char const *argv[])
 			printf("server acccept the client...\n"); 
 			if(fork() == 0){
 				//login(connfd);
-				menu_admin(connfd);
+				menu_utilizador(connfd);
 				close(sockfd);
 				exit(0);
 			}
