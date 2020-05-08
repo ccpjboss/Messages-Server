@@ -43,7 +43,7 @@ void login(int clientfd, Lista_t *Lista){
         else if(validLogin(Lista, email, password)){
             menu_utilizador(clientfd,Lista);
         }
-        char msg4[]= "Erro no login! Verifique o email e a palavra passe";
+        char msg4[]= "Erro no login! Verifique o email e a palavra passe\n";
         write(clientfd,msg4,sizeof(msg4));
     }
 }

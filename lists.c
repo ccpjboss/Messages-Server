@@ -82,9 +82,11 @@ bool validLogin(Lista_t *list, char *email, char *pass)
 {
 	Utilizador_t *atual = list->cabeca_u;
 
-	while (strcmp(atual->email,email) != 0 || atual->proximo != NULL)
-		atual=atual->proximo;
-
+	while (atual != NULL){
+		if(strcmp(atual->email,email) == 0)
+			break;
+		atual=atual->proximo;		
+	}
 	if (atual == NULL) //Se o atual for igual a NULL significa que percorreu a lista toda e não encontrou nenhum email
 		return false;
 
