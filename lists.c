@@ -1,6 +1,8 @@
 #include "lists.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h> 
+
 
 void inicia_lista(Lista_t *list)
 {
@@ -80,7 +82,7 @@ bool validLogin(Lista_t *list, char *email, char *pass)
 {
 	Utilizador_t *atual = list->cabeca_u;
 
-	while (strcmp(atual->email,email) != 0 || atual == NULL)
+	while (strcmp(atual->email,email) != 0 || atual->proximo != NULL)
 		atual=atual->proximo;
 
 	if (atual == NULL) //Se o atual for igual a NULL significa que percorreu a lista toda e não encontrou nenhum email
