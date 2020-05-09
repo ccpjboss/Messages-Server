@@ -150,3 +150,41 @@ void insereMensagem(Lista_t* list, char* email_r, char* email_d, int id, char* t
 		return;
 	}
 }
+
+void readMessage(Lista_t* list, int id) // Read a message from a given message id
+{
+	Mensagem_t* atual = list->cabeca_m;
+
+	while(atual != NULL)
+	{
+		if(atual->msgid == id)
+			break;
+		atual=atual->proximo;
+	}
+
+	if (atual == NULL)
+		return;
+
+	printf("%s ->\t", atual->email_r);
+	printf("%s.\n", atual->text);
+	atual->lida=true;
+}
+
+void printMessages(Lista_t* list, char* email) //Prints all messages from a user
+{
+	Mensagem_t* atual = list->cabeca_m;
+
+	while (atual != NULL)
+	{
+		if((strcmp(email,atual->email_d) == 0) && (atual->lida == false))
+		{
+			printf("%d-> ", atual->msgid);
+			printf("%s ", atual->email_r);
+			printf("\n");
+		}
+		atual=atual->proximo;
+	}
+
+	if (atual == NULL)
+		return;
+}
