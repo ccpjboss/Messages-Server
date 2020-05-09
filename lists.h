@@ -8,7 +8,6 @@ typedef struct Utilizador
     char email [256];
     char password [20];
     bool admin;
-    int codigo_user;
     struct Utilizador *proximo;
 }Utilizador_t;
 
@@ -22,8 +21,8 @@ struct Date
 typedef struct Mensagem
 {
   struct Date data;
-  int codigo_user_r; //codigo_user remetente
-  int codigo_user_d; //codigo_user destinatario
+  char email_r [256]; //codigo_user remetente
+  char email_d [256]; //codigo_user destinatario
   int msgid; //ID da mensagem
   char text[256]; 
   bool lida;
@@ -42,5 +41,6 @@ void insereUser(int socket_fd, Lista_t *list);
 bool verificaUser(Lista_t *list, char *email);
 bool validLogin(Lista_t *list, char *email, char *pass);
 void deleteUser(Lista_t *list, char *email);
+void insereMensagem(Lista_t* list, char* email_r, char* email_d, int id, char *text, bool lida);
 
 #endif
