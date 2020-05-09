@@ -78,6 +78,34 @@ void insereUser(int socket_fd, Lista_t *list)
 	}
 }
 
+void deleteUser(Lista_t *list, char *email)
+{
+	Utilizador_t *atual = list->cabeca_u;
+	Utilizador_t *anterior = NULL;
+
+	if((atual != NULL) && (strcmp(email,atual->email) == 0)) //Se a cabeca for diferente de NULL e for o email procurado
+	{
+		list->cabeca_u=atual->proximo; //A cabeca passa a ser o no a seguir
+		free(atual); //Apaga o atual
+		return;
+	}
+
+	while(atual != NULL) //Enquanto a cabeca for diferente de NULL
+	{
+		if(strcmp(email,atual->email) == 0) //Se a condicao se verificar, sai do while e temos atual == ao no que queremos apagar
+			break;
+
+		anterior=atual; //O anterior vai ser igual ao atual
+		atual=atual->proximo; //e o atual vai ser igual ao atual proximo
+	}
+
+	if (atual == NULL) return; //Se não encontrou nenhum no
+
+	anterior->proximo = atual->proximo;
+	free(atual);
+	return;
+}
+
 bool validLogin(Lista_t *list, char *email, char *pass)
 {
 	Utilizador_t *atual = list->cabeca_u;
