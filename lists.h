@@ -42,5 +42,9 @@ bool verificaUser(Lista_t *list, char *email);
 bool validLogin(Lista_t *list, char *email, char *pass);
 void deleteUser(Lista_t *list, char *email);
 void insereMensagem(Lista_t* list, char* email_r, char* email_d, int id, char *text, bool lida);
+void readMessage(Lista_t* list, int id); // Read a message from a given message id
+void printMessages(Lista_t* list, char* email); //Prints all messages from a user
+void deleteMessagesRead(Lista_t* list, char* email); //Deletes all the messages read from a user
+void deleteMessagesUser(Lista_t* list, char* email); //Deletes all messages from a user, read and not read
 
 #endif
