@@ -59,7 +59,6 @@ void insereUser(int socket_fd, Lista_t *list)
 	strcpy(new->password, buff2);
 
 	new->admin = false;
-	new->codigo_user = 1; //TODO: Think about user code
 	new->proximo = NULL;
 
 	if (list->cabeca_u == NULL) //Se a cabeça for igual a NULL então new vai ser o primeiro nó
@@ -122,4 +121,32 @@ bool validLogin(Lista_t *list, char *email, char *pass)
 		return true;
 	else
 		return false;
+}
+
+void insereMensagem(Lista_t* list, char* email_r, char* email_d, int id, char* text, bool lida)
+{
+	Mensagem_t *new = (Mensagem_t *)malloc(sizeof(Mensagem_t));
+	Mensagem_t *atual = list->cabeca_m;
+
+	strcpy(new->email_r,email_r);
+	strcpy(new->email_d,email_d);
+	new->msgid = id;
+	strcpy(new->text,text);
+	new->lida=false;
+	new->proximo=NULL;
+
+	if (list->cabeca_m == NULL)
+	{
+		list->cabeca_m = new;
+		return;
+	}
+	else
+	{
+		while(atual->proximo != NULL)
+		{
+			atual=atual->proximo;
+		}
+		atual->proximo =new;
+		return;
+	}
 }
