@@ -43,7 +43,7 @@ void login(int clientfd, Lista_t *Lista){
         else if(validLogin(Lista, email, password)){
             menu_utilizador(clientfd,Lista);
         }
-        char msg4[]= "Erro no login! Verifique o email e a palavra passe\n";
+        char msg4[]= "Erro no login! Verifique o email e a palavra passe.\n";
         write(clientfd,msg4,sizeof(msg4));
     }
 }
@@ -60,6 +60,7 @@ void menu_admin(int clientfd,Lista_t *Lista)
     char msg3[]="2-Apagar Utilizador Existente\n";
     char msg4[]="3-Sair\n";
     char msg5[]="Indique a opção pretendida:";
+
     
     write(clientfd,msg,sizeof(msg));
     write(clientfd,msg1,sizeof(msg1));
@@ -79,7 +80,7 @@ void menu_admin(int clientfd,Lista_t *Lista)
             break;
         }
         else{
-            char msg6[]="Opção inválida\n";
+            char msg6[]="Opção inválida!\n";
             write(clientfd,msg6,sizeof(msg6));
         }
     }
@@ -87,17 +88,34 @@ void menu_admin(int clientfd,Lista_t *Lista)
     switch (i)
     {
         case 1: ;
-            char msg[]="\n";
             write(clientfd,msg,sizeof(msg));
 
             insereUser(clientfd,Lista);
             printUtilizadors(Lista->cabeca_u);
             
+            char msg7[]="Utilizador registado com sucesso!";
+            write(clientfd,msg7,sizeof(msg7));
+
             menu_admin(clientfd,Lista);
             
             break;
-        case 2:
-            //Apaga Utilizador
+        case 2: ;
+            write(clientfd,msg,sizeof(msg));
+            char email[256];
+
+            char msg8[]= "Indique o email do utilizador que pretende eliminar:";
+            write(clientfd,msg8,sizeof(msg8));
+            bzero(buff,20);
+            read(clientfd,buff,sizeof(buff));
+            buff[strcspn(buff,"\r\n")] = 0;
+            strcpy(email,buff);
+
+            deleteUser(Lista,email);
+            
+            char msg9[]="Utilizador eliminado com sucesso!";
+            write(clientfd,msg9,sizeof(msg9));
+
+            menu_admin(clientfd,Lista);
             break;
         case 3:
             login(clientfd,Lista);
