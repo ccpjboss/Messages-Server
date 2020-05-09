@@ -1,8 +1,7 @@
 #include "lists.h"
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h> 
-
+#include <stdbool.h>
 
 void inicia_lista(Lista_t *list)
 {
@@ -82,23 +81,24 @@ void deleteUser(Lista_t *list, char *email)
 	Utilizador_t *atual = list->cabeca_u;
 	Utilizador_t *anterior = NULL;
 
-	if((atual != NULL) && (strcmp(email,atual->email) == 0)) //Se a cabeca for diferente de NULL e for o email procurado
+	if ((atual != NULL) && (strcmp(email, atual->email) == 0)) //Se a cabeca for diferente de NULL e for o email procurado
 	{
-		list->cabeca_u=atual->proximo; //A cabeca passa a ser o no a seguir
-		free(atual); //Apaga o atual
+		list->cabeca_u = atual->proximo; //A cabeca passa a ser o no a seguir
+		free(atual);					 //Apaga o atual
 		return;
 	}
 
-	while(atual != NULL) //Enquanto a cabeca for diferente de NULL
+	while (atual != NULL) //Enquanto a cabeca for diferente de NULL
 	{
-		if(strcmp(email,atual->email) == 0) //Se a condicao se verificar, sai do while e temos atual == ao no que queremos apagar
+		if (strcmp(email, atual->email) == 0) //Se a condicao se verificar, sai do while e temos atual == ao no que queremos apagar
 			break;
 
-		anterior=atual; //O anterior vai ser igual ao atual
-		atual=atual->proximo; //e o atual vai ser igual ao atual proximo
+		anterior = atual;		//O anterior vai ser igual ao atual
+		atual = atual->proximo; //e o atual vai ser igual ao atual proximo
 	}
 
-	if (atual == NULL) return; //Se não encontrou nenhum no
+	if (atual == NULL)
+		return; //Se não encontrou nenhum no
 
 	anterior->proximo = atual->proximo;
 	free(atual);
@@ -109,10 +109,11 @@ bool validLogin(Lista_t *list, char *email, char *pass)
 {
 	Utilizador_t *atual = list->cabeca_u;
 
-	while (atual != NULL){
-		if(strcmp(atual->email,email) == 0)
+	while (atual != NULL)
+	{
+		if (strcmp(atual->email, email) == 0)
 			break;
-		atual=atual->proximo;		
+		atual = atual->proximo;
 	}
 	if (atual == NULL) //Se o atual for igual a NULL significa que percorreu a lista toda e não encontrou nenhum email
 		return false;
@@ -123,17 +124,17 @@ bool validLogin(Lista_t *list, char *email, char *pass)
 		return false;
 }
 
-void insereMensagem(Lista_t* list, char* email_r, char* email_d, int id, char* text, bool lida)
+void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *text, bool lida)
 {
 	Mensagem_t *new = (Mensagem_t *)malloc(sizeof(Mensagem_t));
 	Mensagem_t *atual = list->cabeca_m;
 
-	strcpy(new->email_r,email_r);
-	strcpy(new->email_d,email_d);
+	strcpy(new->email_r, email_r);
+	strcpy(new->email_d, email_d);
 	new->msgid = id;
-	strcpy(new->text,text);
-	new->lida=false;
-	new->proximo=NULL;
+	strcpy(new->text, text);
+	new->lida = false;
+	new->proximo = NULL;
 
 	if (list->cabeca_m == NULL)
 	{
@@ -142,24 +143,24 @@ void insereMensagem(Lista_t* list, char* email_r, char* email_d, int id, char* t
 	}
 	else
 	{
-		while(atual->proximo != NULL)
+		while (atual->proximo != NULL)
 		{
-			atual=atual->proximo;
+			atual = atual->proximo;
 		}
-		atual->proximo =new;
+		atual->proximo = new;
 		return;
 	}
 }
 
-void readMessage(Lista_t* list, int id) // Read a message from a given message id
+void readMessage(Lista_t *list, int id) // Read a message from a given message id
 {
-	Mensagem_t* atual = list->cabeca_m;
+	Mensagem_t *atual = list->cabeca_m;
 
-	while(atual != NULL)
+	while (atual != NULL)
 	{
-		if(atual->msgid == id)
+		if (atual->msgid == id)
 			break;
-		atual=atual->proximo;
+		atual = atual->proximo;
 	}
 
 	if (atual == NULL)
@@ -167,24 +168,83 @@ void readMessage(Lista_t* list, int id) // Read a message from a given message i
 
 	printf("%s ->\t", atual->email_r);
 	printf("%s.\n", atual->text);
-	atual->lida=true;
+	atual->lida = true;
 }
 
-void printMessages(Lista_t* list, char* email) //Prints all messages from a user
+void printMessages(Lista_t *list, char *email) //Prints all messages from a user
 {
-	Mensagem_t* atual = list->cabeca_m;
+	Mensagem_t *atual = list->cabeca_m;
 
 	while (atual != NULL)
 	{
-		if((strcmp(email,atual->email_d) == 0) && (atual->lida == false))
+		if ((strcmp(email, atual->email_d) == 0) && (atual->lida == false))
 		{
 			printf("%d-> ", atual->msgid);
 			printf("%s ", atual->email_r);
 			printf("\n");
 		}
-		atual=atual->proximo;
+		atual = atual->proximo;
 	}
 
 	if (atual == NULL)
 		return;
+}
+void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages read from a user
+{
+	Mensagem_t *atual = list->cabeca_m;
+	Mensagem_t *anterior = NULL;
+
+	while ((atual != NULL) && (strcmp(atual->email_d, email) == 0))
+	{
+		list->cabeca_m = atual->proximo;
+		free(atual);
+		atual = list->cabeca_m;
+	}
+
+	while (atual != NULL)
+	{
+		while ((atual != NULL) && (strcmp(atual->email_d, email) != 0))
+		{
+			anterior = atual;
+			atual = atual->proximo;
+		}
+
+		if (atual == NULL)
+			return;
+
+		anterior->proximo = atual->proximo;
+		free(atual);
+
+		atual=anterior->proximo;
+	}
+}
+
+void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from a user, read and not read
+{
+	Mensagem_t *atual = list->cabeca_m;
+	Mensagem_t *anterior = NULL;
+
+	while ((atual != NULL) && (strcmp(atual->email_d, email) == 0) && (atual->lida == true))
+	{
+		list->cabeca_m = atual->proximo;
+		free(atual);
+		atual = list->cabeca_m;
+	}
+
+	while (atual != NULL)
+	{
+		while ((atual != NULL) && (strcmp(atual->email_d, email) != 0) && (atual->lida == false))
+		{
+			anterior = atual;
+			atual = atual->proximo;
+		}
+
+		if (atual == NULL)
+			return;
+
+		anterior->proximo = atual->proximo;
+		free(atual);
+
+		atual=anterior->proximo;
+	}
 }
