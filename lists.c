@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 void inicia_lista(Lista_t *list)
 {
@@ -152,7 +153,7 @@ void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *t
 	}
 }
 
-void readMessage(Lista_t *list, int id) // Read a message from a given message id
+void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a given message id
 {
 	Mensagem_t *atual = list->cabeca_m;
 
@@ -165,23 +166,25 @@ void readMessage(Lista_t *list, int id) // Read a message from a given message i
 
 	if (atual == NULL)
 		return;
-
-	printf("%s ->\t", atual->email_r);
-	printf("%s.\n", atual->text);
+	write(socket_fd, atual->text, sizeof(atual->text));
 	atual->lida = true;
 }
 
-void printMessages(Lista_t *list, char *email) //Prints all messages from a user
+void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messages from a user
 {
 	Mensagem_t *atual = list->cabeca_m;
+	char msg_to_send[256];
 
 	while (atual != NULL)
 	{
 		if ((strcmp(email, atual->email_d) == 0) && (atual->lida == false))
 		{
-			printf("%d-> ", atual->msgid);
-			printf("%s ", atual->email_r);
-			printf("\n");
+			//write(socket_fd,atual->msgid,sizeof(atual->msgid));
+			//write(socket_fd,atual->email_r,sizeof(atual->email_r));
+			/* Se isto não funcionar comenta estas 3 linhas e descomenta as outras duas de cima */
+			sprintf(msg_to_send, "%d-> ", atual->msgid);
+			strcat(msg_to_send, atual->email_r);
+			write(socket_fd, msg_to_send, sizeof(msg_to_send));
 		}
 		atual = atual->proximo;
 	}
@@ -189,6 +192,7 @@ void printMessages(Lista_t *list, char *email) //Prints all messages from a user
 	if (atual == NULL)
 		return;
 }
+
 void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages read from a user
 {
 	Mensagem_t *atual = list->cabeca_m;
@@ -215,7 +219,7 @@ void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages r
 		anterior->proximo = atual->proximo;
 		free(atual);
 
-		atual=anterior->proximo;
+		atual = anterior->proximo;
 	}
 }
 
@@ -245,6 +249,6 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 		anterior->proximo = atual->proximo;
 		free(atual);
 
-		atual=anterior->proximo;
+		atual = anterior->proximo;
 	}
 }
