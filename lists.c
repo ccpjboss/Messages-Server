@@ -22,11 +22,11 @@ void printUtilizadors(Utilizador_t *node)
 
 void printMensagens(Mensagem_t *node)
 {
-	Mensagem_t *atual=node;
-	while(atual != NULL)
+	Mensagem_t *atual = node;
+	while (atual != NULL)
 	{
-		printf("%d %s %s\n",atual->msgid,atual->email_d,atual->text);
-		atual=atual->proximo;
+		printf("%d %s %s\n", atual->msgid, atual->email_d, atual->text);
+		atual = atual->proximo;
 	}
 }
 
@@ -167,7 +167,7 @@ void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a 
 {
 	Mensagem_t *atual = list->cabeca_m;
 	char buff[256];
-	bzero(buff,256);
+	bzero(buff, 256);
 
 	while (atual != NULL)
 	{
@@ -178,7 +178,7 @@ void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a 
 
 	if (atual == NULL)
 		return;
-	strcpy(buff,atual->text);
+	strcpy(buff, atual->text);
 	write(socket_fd, buff, sizeof(buff));
 	atual->lida = true;
 }
@@ -186,16 +186,15 @@ void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a 
 void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messages from a user
 {
 	Mensagem_t *atual = list->cabeca_m;
-	char msg_to_send[271];
-    bzero(msg_to_send, 271); //Resets the buffer
+	char msg_to_send[281];
+	bzero(msg_to_send, 281); //Resets the buffer
 
 	while (atual != NULL)
 	{
 		if ((strcmp(email, atual->email_d) == 0) && (atual->lida == false))
 		{
-			sprintf(msg_to_send, "id:%d  email remetente:%s\n", atual->msgid,atual->email_r);
+			sprintf(msg_to_send, "id:%d  email remetente:%s\n", atual->msgid, atual->email_r);
 			write(socket_fd, msg_to_send, sizeof(msg_to_send));
-
 		}
 		atual = atual->proximo;
 	}
@@ -238,28 +237,42 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 {
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
-
-	while ((atual != NULL) && (strcmp(atual->email_d, email) == 0) && (atual->lida == true))
+	printf("1\n");
+	if (list->cabeca_m == NULL)
+		return;
+	printf("2\n");
+	while ((list->cabeca_m != NULL) && (strcmp(list->cabeca_m->email_d, email) == 0) && (list->cabeca_m->lida == true))
 	{
-		list->cabeca_m = atual->proximo;
-		free(atual);
-		atual = list->cabeca_m;
+		anterior = list->cabeca_m;
+		list->cabeca_m = list->cabeca_m->proximo;
+		free(anterior);
 	}
+	printf("3\n");
+	atual = list->cabeca_m;
+	anterior = NULL;
+	printf("4\n");
 
 	while (atual != NULL)
 	{
-		while ((atual != NULL) && (strcmp(atual->email_d, email) != 0) && (atual->lida == false))
+		printf("5\n");
+		while ((atual != NULL) && (atual->lida == false))
 		{
+			printf("6\n");
 			anterior = atual;
 			atual = atual->proximo;
 		}
 
 		if (atual == NULL)
 			return;
+		printf("7\n");
 
-		anterior->proximo = atual->proximo;
-		free(atual);
-
-		atual = anterior->proximo;
+		if (strcmp(atual->email_d, email) == 0)
+		{
+			anterior->proximo = atual->proximo;
+			free(atual);
+			atual = anterior->proximo;
+		}
+		anterior=atual;
+		atual=atual->proximo;
 	}
 }
