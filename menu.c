@@ -8,6 +8,7 @@
 #include <string.h>
 #include "lists.h"
 #include <stdbool.h> 
+#include "menu.h"
 int id = 0;
 
 void login(int clientfd, Lista_t *Lista){   
@@ -222,7 +223,7 @@ void menu_utilizador(int clientfd, Lista_t *Lista,char* email_user)
         break;
     case 4: ;
 
-        deleteMessagesUser(Lista,email_user);
+        deleteMessagesRead(Lista,email_user);
         printMensagens(Lista->cabeca_m);
 
         menu_utilizador(clientfd,Lista,email_user);
