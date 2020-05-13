@@ -193,7 +193,7 @@ void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messa
 	{
 		if ((strcmp(email, atual->email_d) == 0) && (atual->lida == false))
 		{
-			sprintf(msg_to_send, "%d-> %s\n", atual->msgid,atual->email_r);
+			sprintf(msg_to_send, "id:%d  email remetente:%s\n", atual->msgid,atual->email_r);
 			write(socket_fd, msg_to_send, sizeof(msg_to_send));
 
 		}
