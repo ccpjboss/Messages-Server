@@ -37,6 +37,7 @@ typedef struct Lista
 
 void inicia_lista(Lista_t *const list);
 void printUtilizadors(Utilizador_t *const node);
+void printMensagens(Mensagem_t *node);
 void insereUser(int socket_fd, Lista_t *list);
 bool verificaUser(Lista_t *list, char *email);
 bool validLogin(Lista_t *list, char *email, char *pass);

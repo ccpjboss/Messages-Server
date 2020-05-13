@@ -20,6 +20,16 @@ void printUtilizadors(Utilizador_t *node)
 	}
 }
 
+void printMensagens(Mensagem_t *node)
+{
+	Mensagem_t *atual=node;
+	while(atual != NULL)
+	{
+		printf("%d %s %s\n",atual->msgid,atual->email_d,atual->text);
+		atual=atual->proximo;
+	}
+}
+
 bool verificaUser(Lista_t *list, char *email)
 {
 	bool dup = false;
@@ -156,6 +166,8 @@ void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *t
 void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a given message id
 {
 	Mensagem_t *atual = list->cabeca_m;
+	char buff[256];
+	bzero(buff,256);
 
 	while (atual != NULL)
 	{
@@ -166,25 +178,24 @@ void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a 
 
 	if (atual == NULL)
 		return;
-	write(socket_fd, atual->text, sizeof(atual->text));
+	strcpy(buff,atual->text);
+	write(socket_fd, buff, sizeof(buff));
 	atual->lida = true;
 }
 
 void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messages from a user
 {
 	Mensagem_t *atual = list->cabeca_m;
-	char msg_to_send[256];
+	char msg_to_send[271];
+    bzero(msg_to_send, 271); //Resets the buffer
 
 	while (atual != NULL)
 	{
 		if ((strcmp(email, atual->email_d) == 0) && (atual->lida == false))
 		{
-			//write(socket_fd,atual->msgid,sizeof(atual->msgid));
-			//write(socket_fd,atual->email_r,sizeof(atual->email_r));
-			/* Se isto não funcionar comenta estas 3 linhas e descomenta as outras duas de cima */
-			sprintf(msg_to_send, "%d-> ", atual->msgid);
-			strcat(msg_to_send, atual->email_r);
+			sprintf(msg_to_send, "%d-> %s\n", atual->msgid,atual->email_r);
 			write(socket_fd, msg_to_send, sizeof(msg_to_send));
+
 		}
 		atual = atual->proximo;
 	}
