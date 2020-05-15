@@ -203,7 +203,7 @@ void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messa
 		return;
 }
 
-void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages read from a user
+void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages from a user
 {
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
@@ -233,38 +233,35 @@ void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages r
 	}
 }
 
-void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from a user, read and not read
+void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from a user, read
 {
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
-	printf("1\n");
+
 	if (list->cabeca_m == NULL)
 		return;
-	printf("2\n");
+
 	while ((list->cabeca_m != NULL) && (strcmp(list->cabeca_m->email_d, email) == 0) && (list->cabeca_m->lida == true))
 	{
 		anterior = list->cabeca_m;
 		list->cabeca_m = list->cabeca_m->proximo;
 		free(anterior);
 	}
-	printf("3\n");
+
 	atual = list->cabeca_m;
 	anterior = NULL;
-	printf("4\n");
 
 	while (atual != NULL)
 	{
-		printf("5\n");
 		while ((atual != NULL) && (atual->lida == false))
 		{
-			printf("6\n");
+
 			anterior = atual;
 			atual = atual->proximo;
 		}
 
 		if (atual == NULL)
 			return;
-		printf("7\n");
 
 		if (strcmp(atual->email_d, email) == 0)
 		{
@@ -272,7 +269,7 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 			free(atual);
 			atual = anterior->proximo;
 		}
-		anterior=atual;
-		atual=atual->proximo;
+		anterior = atual;
+		atual = atual->proximo;
 	}
 }
