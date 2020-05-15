@@ -203,7 +203,7 @@ void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messa
 		return;
 }
 
-void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages read from a user
+void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages from a user
 {
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
@@ -233,7 +233,7 @@ void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages r
 	}
 }
 
-void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from a user, read and not read
+void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from a user, read
 {
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
@@ -253,7 +253,6 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 
 	while (atual != NULL)
 	{
-
 		while ((atual != NULL) && (atual->lida == false))
 		{
 
