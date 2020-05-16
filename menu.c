@@ -190,7 +190,7 @@ void menu_utilizador(int clientfd, char *email_user)
         strcpy(idm, buff);
         num = atoi(idm);
 
-        readMessage(clientfd, num);
+        readMessage(clientfd, num, email_user);
 
         menu_utilizador(clientfd, email_user);
         break;
