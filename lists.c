@@ -218,7 +218,7 @@ void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida)
 	}
 }
 
-void readMessage(int socket_fd, int id) // Read a message from a given message id
+void readMessage(int socket_fd, int id, char *email) // Read a message from a given message id
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
 	inicia_lista(list);
@@ -230,7 +230,7 @@ void readMessage(int socket_fd, int id) // Read a message from a given message i
 
 	while (atual != NULL)
 	{
-		if (atual->msgid == id)
+		if (atual->msgid == id && strcmp(atual->email_d, email) == 0)
 			break;
 		atual = atual->proximo;
 	}
@@ -496,7 +496,7 @@ void guardaMensagensFile(Lista_t *list) //Escreve a lista das mensagens no fiche
 	return;
 }
 
-void guardaUsersFile(Lista_t *list) //Escreve a lista dos users no ficheiro 
+void guardaUsersFile(Lista_t *list) //Escreve a lista dos users no ficheiro
 {
 	Utilizador_t *atual = list->cabeca_u;
 	FILE *outfile;
