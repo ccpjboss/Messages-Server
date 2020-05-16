@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <unistd.h>
 #define MAX 80
 #define PORT 8080
 #define SA struct sockaddr
@@ -60,27 +61,25 @@ int main(int argc, char const *argv[])
 	else
 		printf("Server listening...\n");
 
-	len = sizeof(cli);
 	// Accept the data packet from client and verification
-	connfd = accept(sockfd, (SA *)&cli, &len);
-	if (connfd < 0)
+	while (1)
 	{
-		printf("server acccept failed...\n");
-		exit(0);
+		len = sizeof(cli);
+		connfd = accept(sockfd, (SA *)&cli, &len);
+		if (connfd > 0)
+		{
+			printf("server acccept the client...\n");
+			if (fork() == 0)
+			{
+				close(socket);
+				login(connfd);
+				exit(0);
+			}
+			close(connfd);
+		}
+		else
+			printf("server acccept failed...\n");
 	}
-	else
-		printf("server acccept the client...\n");
-	
-
-	login(connfd);
-
-	close(connfd);
-
-	/*Lista_t *Lista = (Lista_t *) malloc(sizeof(Lista_t));
-    inicia_lista(Lista);
-    insereUser(connfd,Lista);
-    insereUser(connfd, Lista);
-    printUtilizadors(Lista->cabeca_u);*/
 
 	return 0;
 }
