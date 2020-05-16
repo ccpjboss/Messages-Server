@@ -71,9 +71,8 @@ int main(int argc, char const *argv[])
 	else
 		printf("server acccept the client...\n");
 	
-	Lista_t *Lista = (Lista_t *) malloc(sizeof(Lista_t));
-	inicia_lista(Lista);
-	login(connfd,Lista);
+
+	login(connfd);
 
 	close(connfd);
 
