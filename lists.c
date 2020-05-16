@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 void inicia_lista(Lista_t *list)
 {
@@ -272,4 +273,165 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 		anterior = atual;
 		atual = atual->proximo;
 	}
+}
+
+void leMessagesFile(Lista_t *list)
+{
+	Mensagem_t *atual = list->cabeca_m;
+	/* Opens the file for reading in binary mode */
+	FILE *infile;
+	infile = fopen("mensagens.bin", "rb");
+
+	if (infile == NULL) // Checks for error
+	{
+		perror("fopen mensgens.bin");
+		exit(1);
+	}
+
+	/* Checks for empty file */
+	fseek(infile, 0, SEEK_END);
+	int size = ftell(infile);
+
+	if (0 == size)
+	{
+		printf("File is empty\n");
+		return;
+	}
+	rewind(infile);
+
+	while (1)
+	{
+		/* READ */
+		Mensagem_t *new = (Mensagem_t *)malloc(sizeof(Mensagem_t));
+		int check = fread(new, sizeof(Mensagem_t), 1, infile);
+
+		/* CHECK */
+		if (check != sizeof(Mensagem_t))
+			break;
+
+		/* USE */
+		if (list->cabeca_m == NULL)
+		{
+			list->cabeca_m = new;
+			new->proximo = NULL;
+			atual = list->cabeca_m;
+		}
+		else
+		{
+			atual->proximo = new;
+			new->proximo = NULL;
+			atual = atual->proximo;
+		}
+		free(new);
+	}
+	fclose(infile);
+	return;
+}
+
+void leUserFile(Lista_t *list)
+{
+	Utilizador_t *atual = list->cabeca_u;
+	FILE *infile;
+	infile = fopen("utilizador.bin", "rb");
+
+	if (infile == NULL)
+	{
+		perror("fopen utilizador.bin");
+		exit(1);
+	}
+
+	fseek(infile, 0, SEEK_END);
+	int size = ftell(infile);
+
+	if (0 == size)
+	{
+		printf("File is empty\n");
+		return;
+	}
+	rewind(infile);
+
+	while (1)
+	{
+		/* READ */
+		Utilizador_t *new = (Utilizador_t *)malloc(sizeof(Utilizador_t));
+		int check = fread(new, sizeof(Utilizador_t), 1, infile);
+
+		/* CHECK */
+		if (check != sizeof(Utilizador_t))
+			break;
+
+		/* USE */
+		if (list->cabeca_u == NULL)
+		{
+			list->cabeca_u = new;
+			new->proximo = NULL;
+			atual = list->cabeca_u;
+		}
+		else
+		{
+			atual->proximo = new;
+			new->proximo = NULL;
+			atual = atual->proximo;
+		}
+		free(new);
+	}
+
+	fclose(infile);
+	return;
+}
+
+void guardaMensagensFile(Lista_t *list)
+{
+	Mensagem_t *atual = list->cabeca_m;
+	FILE *outfile;
+	outfile = fopen("mensagens.bin", "wb");
+
+	if (outfile == NULL)
+	{
+		perror("fopen mensgens.bin");
+		exit(1);
+	}
+
+	if (list->cabeca_m == NULL)
+	{
+		printf("Nothing to write to file...");
+		return;
+	}
+
+	while (atual != NULL)
+	{
+		fwrite(atual, sizeof(Mensagem_t), 1, outfile);
+		atual = atual->proximo;
+	}
+
+	fclose(outfile);
+	return;
+}
+
+void guardaUsersFile(Lista_t *list)
+{
+	Utilizador_t *atual = list->cabeca_u;
+	FILE *outfile;
+	outfile = fopen("utiizador.bin", "wb");
+
+	if (outfile == NULL)
+	{
+		perror("fopen utiizador.bin");
+		exit(1);
+	}
+
+	if (list->cabeca_u == NULL)
+	{
+		printf("Nothing to write to file...");
+		return;
+	}
+
+	while (atual != NULL)
+	{
+		fwrite(atual, sizeof(Utilizador_t), 1, outfile);
+		atual = atual->proximo;
+	}
+
+	fclose(outfile);
+	return;
 }
