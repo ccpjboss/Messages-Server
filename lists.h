@@ -47,5 +47,9 @@ void readMessage(int socket_fd, Lista_t *list, int id);        // Read a message
 void printMessages(int socket_fd, Lista_t *list, char *email); //Prints all messages from a user
 void deleteMessagesRead(Lista_t *list, char *email);           //Deletes all the messages read from a user
 void deleteMessagesUser(Lista_t *list, char *email);           //Deletes all messages from a user, read and not read
+void guardaMensagensFile(Lista_t *list);
+void leMensagensFile(Lista_t *list);
+void guardaUsersFile(Lista_t *list);
+void leUsersFile(Lista_t *list);
 
 #endif
