@@ -186,7 +186,7 @@ void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida)
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
 	inicia_lista(list);
-	leUserFile(list);
+	leMessagesFile(list);
 
 	Mensagem_t *new = (Mensagem_t *)malloc(sizeof(Mensagem_t));
 	Mensagem_t *atual = list->cabeca_m;
