@@ -11,28 +11,41 @@ void inicia_lista(Lista_t *list)
 	list->cabeca_u = NULL;
 }
 
-void printUtilizadors(Utilizador_t *node)
+void printUtilizadors()
 {
-	Utilizador_t *atual = node;
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leUserFile(list);
+	Utilizador_t *atual = list->cabeca_u;
 	while (atual != NULL)
 	{
 		printf("%s  %s \n", atual->email, atual->password);
 		atual = atual->proximo;
 	}
+	free(list);
 }
 
-void printMensagens(Mensagem_t *node)
+void printMensagens()
 {
-	Mensagem_t *atual = node;
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leMessagesFile(list);
+
+	Mensagem_t *atual = list->cabeca_m;
 	while (atual != NULL)
 	{
 		printf("%d %s %s\n", atual->msgid, atual->email_d, atual->text);
 		atual = atual->proximo;
 	}
+	free(list);
 }
 
-bool verificaUser(Lista_t *list, char *email)
+bool verificaUser(char *email)
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leUserFile(list);
+
 	bool dup = false;
 	Utilizador_t *atual = list->cabeca_u;
 	while (atual != NULL)
@@ -41,13 +54,13 @@ bool verificaUser(Lista_t *list, char *email)
 			dup = true;
 		atual = atual->proximo;
 	}
+	free(list);
 	return dup;
 }
 
-void insereUser(int socket_fd, Lista_t *list)
+void insereUser(int socket_fd)
 {
 	Utilizador_t *new = (Utilizador_t *)malloc(sizeof(Utilizador_t));
-	Utilizador_t *atual = list->cabeca_u;
 
 	char msg_send1[] = "Insira o email: ";
 	char msg_send2[] = "Insira a palavra passe: ";
@@ -61,7 +74,7 @@ void insereUser(int socket_fd, Lista_t *list)
 		read(socket_fd, buff, sizeof(buff));			//Le o input do cliente
 		buff[strcspn(buff, "\r\n")] = 0;
 		strcpy(new->email, buff); //Copia para a variavel da struct
-	} while (verificaUser(list, new->email));
+	} while (verificaUser(new->email));
 
 	write(socket_fd, msg_send2, sizeof(msg_send2));
 	bzero(buff2, 20);
@@ -72,9 +85,17 @@ void insereUser(int socket_fd, Lista_t *list)
 	new->admin = false;
 	new->proximo = NULL;
 
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leUserFile(list);
+
+	Utilizador_t *atual = list->cabeca_u;
+
 	if (list->cabeca_u == NULL) //Se a cabeça for igual a NULL então new vai ser o primeiro nó
 	{
 		list->cabeca_u = new;
+		guardaUsersFile(list);
+		free(list);
 		return;
 	}
 	else
@@ -84,12 +105,19 @@ void insereUser(int socket_fd, Lista_t *list)
 			atual = atual->proximo;
 		}
 		atual->proximo = new;
+		guardaUsersFile(list);
+		free(list);
 		return;
 	}
 }
 
-void deleteUser(Lista_t *list, char *email)
+void deleteUser(char *email)
 {
+	/* Load records */
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leUserFile(list);
+
 	Utilizador_t *atual = list->cabeca_u;
 	Utilizador_t *anterior = NULL;
 
@@ -97,6 +125,8 @@ void deleteUser(Lista_t *list, char *email)
 	{
 		list->cabeca_u = atual->proximo; //A cabeca passa a ser o no a seguir
 		free(atual);					 //Apaga o atual
+		guardaUsersFile(list);			 //Atualiza o save file
+		free(list);
 		return;
 	}
 
@@ -110,15 +140,23 @@ void deleteUser(Lista_t *list, char *email)
 	}
 
 	if (atual == NULL)
+	{
+		free(list);
 		return; //Se não encontrou nenhum no
-
+	}
 	anterior->proximo = atual->proximo;
 	free(atual);
+	guardaUsersFile(list); //Atualiza o save file
+	free(list);
 	return;
 }
 
-bool validLogin(Lista_t *list, char *email, char *pass)
+bool validLogin(char *email, char *pass)
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leUserFile(list);
+
 	Utilizador_t *atual = list->cabeca_u;
 
 	while (atual != NULL)
@@ -128,16 +166,28 @@ bool validLogin(Lista_t *list, char *email, char *pass)
 		atual = atual->proximo;
 	}
 	if (atual == NULL) //Se o atual for igual a NULL significa que percorreu a lista toda e não encontrou nenhum email
+	{
+		free(list);
 		return false;
-
+	}
 	if (strcmp(atual->password, pass) == 0) //Atual aqui esta igual ao no do email passado
+	{
+		free(list);
 		return true;
+	}
 	else
+	{
+		free(list);
 		return false;
+	}
 }
 
-void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *text, bool lida)
+void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida)
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leUserFile(list);
+
 	Mensagem_t *new = (Mensagem_t *)malloc(sizeof(Mensagem_t));
 	Mensagem_t *atual = list->cabeca_m;
 
@@ -151,6 +201,8 @@ void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *t
 	if (list->cabeca_m == NULL)
 	{
 		list->cabeca_m = new;
+		guardaMensagensFile(list);
+		free(list);
 		return;
 	}
 	else
@@ -160,12 +212,18 @@ void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *t
 			atual = atual->proximo;
 		}
 		atual->proximo = new;
+		guardaMensagensFile(list);
+		free(list);
 		return;
 	}
 }
 
-void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a given message id
+void readMessage(int socket_fd, int id) // Read a message from a given message id
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leMessagesFile(list);
+
 	Mensagem_t *atual = list->cabeca_m;
 	char buff[256];
 	bzero(buff, 256);
@@ -178,14 +236,23 @@ void readMessage(int socket_fd, Lista_t *list, int id) // Read a message from a 
 	}
 
 	if (atual == NULL)
+	{
+		free(list);
 		return;
+	}
 	strcpy(buff, atual->text);
 	write(socket_fd, buff, sizeof(buff));
 	atual->lida = true;
+	guardaMensagensFile(list); //Temos de guardar o ficheiro novamente pois atualizamos o campo lida
+	free(list);
 }
 
-void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messages from a user
+void printMessages(int socket_fd, char *email) //Prints all messages from a user
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leMessagesFile(list);
+
 	Mensagem_t *atual = list->cabeca_m;
 	char msg_to_send[281];
 	bzero(msg_to_send, 281); //Resets the buffer
@@ -201,11 +268,17 @@ void printMessages(int socket_fd, Lista_t *list, char *email) //Prints all messa
 	}
 
 	if (atual == NULL)
+	{
+		free(list);
 		return;
+	}
 }
 
-void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages from a user
+void deleteMessagesUser(char *email) //Deletes all the messages from a user
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leMessagesFile(list);
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
 
@@ -225,22 +298,35 @@ void deleteMessagesUser(Lista_t *list, char *email) //Deletes all the messages f
 		}
 
 		if (atual == NULL)
+		{
+			guardaMensagensFile(list);
+			free(list);
 			return;
+		}
 
 		anterior->proximo = atual->proximo;
 		free(atual);
 
 		atual = anterior->proximo;
 	}
+	guardaMensagensFile(list);
+	free(list);
 }
 
-void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from a user, read
+void deleteMessagesRead(char *email) //Deletes all messages from a user, read
 {
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leMessagesFile(list);
+
 	Mensagem_t *atual = list->cabeca_m;
 	Mensagem_t *anterior = NULL;
 
 	if (list->cabeca_m == NULL)
+	{
+		free(list);
 		return;
+	}
 
 	while ((list->cabeca_m != NULL) && (strcmp(list->cabeca_m->email_d, email) == 0) && (list->cabeca_m->lida == true))
 	{
@@ -262,7 +348,11 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 		}
 
 		if (atual == NULL)
+		{
+			guardaMensagensFile(list);
+			free(list);
 			return;
+		}
 
 		if (strcmp(atual->email_d, email) == 0)
 		{
@@ -273,6 +363,9 @@ void deleteMessagesRead(Lista_t *list, char *email) //Deletes all messages from 
 		anterior = atual;
 		atual = atual->proximo;
 	}
+	guardaMensagensFile(list);
+	free(list);
+	return;
 }
 
 void leMessagesFile(Lista_t *list)
@@ -280,11 +373,11 @@ void leMessagesFile(Lista_t *list)
 	Mensagem_t *atual = list->cabeca_m;
 	/* Opens the file for reading in binary mode */
 	FILE *infile;
-	infile = fopen("mensagens.bin", "rb");
+	infile = fopen("mensagem.dat", "r");
 
 	if (infile == NULL) // Checks for error
 	{
-		perror("fopen mensgens.bin");
+		perror("fopen mensagem.dat");
 		exit(1);
 	}
 
@@ -306,7 +399,7 @@ void leMessagesFile(Lista_t *list)
 		int check = fread(new, sizeof(Mensagem_t), 1, infile);
 
 		/* CHECK */
-		if (check != sizeof(Mensagem_t))
+		if (check == 0)
 			break;
 
 		/* USE */
@@ -322,7 +415,6 @@ void leMessagesFile(Lista_t *list)
 			new->proximo = NULL;
 			atual = atual->proximo;
 		}
-		free(new);
 	}
 	fclose(infile);
 	return;
@@ -332,11 +424,11 @@ void leUserFile(Lista_t *list)
 {
 	Utilizador_t *atual = list->cabeca_u;
 	FILE *infile;
-	infile = fopen("utilizador.bin", "rb");
+	infile = fopen("utilizador.dat", "r");
 
 	if (infile == NULL)
 	{
-		perror("fopen utilizador.bin");
+		perror("fopen utilizador.dat");
 		exit(1);
 	}
 
@@ -355,11 +447,9 @@ void leUserFile(Lista_t *list)
 		/* READ */
 		Utilizador_t *new = (Utilizador_t *)malloc(sizeof(Utilizador_t));
 		int check = fread(new, sizeof(Utilizador_t), 1, infile);
-
 		/* CHECK */
-		if (check != sizeof(Utilizador_t))
+		if (check == 0)
 			break;
-
 		/* USE */
 		if (list->cabeca_u == NULL)
 		{
@@ -373,22 +463,20 @@ void leUserFile(Lista_t *list)
 			new->proximo = NULL;
 			atual = atual->proximo;
 		}
-		free(new);
 	}
-
 	fclose(infile);
 	return;
 }
 
-void guardaMensagensFile(Lista_t *list)
+void guardaMensagensFile(Lista_t *list) //Escreve a lista das mensagens no ficheiro
 {
 	Mensagem_t *atual = list->cabeca_m;
 	FILE *outfile;
-	outfile = fopen("mensagens.bin", "wb");
+	outfile = fopen("mensagem.dat", "w");
 
 	if (outfile == NULL)
 	{
-		perror("fopen mensgens.bin");
+		perror("fopen mensgem.dat");
 		exit(1);
 	}
 
@@ -408,15 +496,15 @@ void guardaMensagensFile(Lista_t *list)
 	return;
 }
 
-void guardaUsersFile(Lista_t *list)
+void guardaUsersFile(Lista_t *list) //Escreve a lista dos users no ficheiro 
 {
 	Utilizador_t *atual = list->cabeca_u;
 	FILE *outfile;
-	outfile = fopen("utiizador.bin", "wb");
+	outfile = fopen("utilizador.dat", "w");
 
 	if (outfile == NULL)
 	{
-		perror("fopen utiizador.bin");
+		perror("fopen utilizador.dat");
 		exit(1);
 	}
 

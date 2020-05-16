@@ -5,8 +5,8 @@
 #include "lists.h"
 
 
-void login(int clientfd, Lista_t *Lista);
-void menu_admin(int clientfd,Lista_t *Lista);
-void menu_utilizador(int clientfd,Lista_t *Lista,char* email_user);
+void login(int clientfd );
+void menu_admin(int clientfd);
+void menu_utilizador(int clientfd,char* email_user);
 
 #endif

@@ -36,20 +36,20 @@ typedef struct Lista
 } Lista_t;
 
 void inicia_lista(Lista_t *const list);
-void printUtilizadors(Utilizador_t *const node);
-void printMensagens(Mensagem_t *node);
-void insereUser(int socket_fd, Lista_t *list);
-bool verificaUser(Lista_t *list, char *email);
-bool validLogin(Lista_t *list, char *email, char *pass);
-void deleteUser(Lista_t *list, char *email);
-void insereMensagem(Lista_t *list, char *email_r, char *email_d, int id, char *text, bool lida);
-void readMessage(int socket_fd, Lista_t *list, int id);        // Read a message from a given message id
-void printMessages(int socket_fd, Lista_t *list, char *email); //Prints all messages from a user
-void deleteMessagesRead(Lista_t *list, char *email);           //Deletes all the messages read from a user
-void deleteMessagesUser(Lista_t *list, char *email);           //Deletes all messages from a user, read and not read
+void printUtilizadors();
+void printMensagens();
+void insereUser(int socket_fd);
+bool verificaUser(char *email);
+bool validLogin(char *email, char *pass);
+void deleteUser(char *email);
+void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida);
+void readMessage(int socket_fd, int id);        // Read a message from a given message id
+void printMessages(int socket_fd, char *email); //Prints all messages from a user
+void deleteMessagesRead(char *email);           //Deletes all the messages read from a user
+void deleteMessagesUser(char *email);           //Deletes all messages from a user, read and not read
 void guardaMensagensFile(Lista_t *list);
-void leMensagensFile(Lista_t *list);
+void leMessagesFile(Lista_t *list);
 void guardaUsersFile(Lista_t *list);
-void leUsersFile(Lista_t *list);
+void leUserFile(Lista_t *list);
 
 #endif
