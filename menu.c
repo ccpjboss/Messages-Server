@@ -235,7 +235,7 @@ void menu_utilizador(int clientfd, char *email_user)
     case 4:;
 
         deleteMessagesRead(email_user);
-        printMensagens();
+        //printMensagens();
 
         menu_utilizador(clientfd, email_user);
         break;
