@@ -182,7 +182,7 @@ bool validLogin(char *email, char *pass)
 	}
 }
 
-void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida)
+void insereMensagem(int fd, char *email_r, char *email_d, int id, char *text, bool lida)
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
 	inicia_lista(list);
@@ -192,6 +192,13 @@ void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida)
 	Mensagem_t *atual = list->cabeca_m;
 
 	strcpy(new->email_r, email_r);
+	if (verificaUser(email_d) == false)
+	{
+		char msg[] = "Email invalido!\n";
+		write(fd,msg,sizeof(msg));
+		return;
+	}
+
 	strcpy(new->email_d, email_d);
 	new->msgid = id;
 	strcpy(new->text, text);

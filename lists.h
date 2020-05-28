@@ -42,7 +42,7 @@ void insereUser(int socket_fd);
 bool verificaUser(char *email);
 bool validLogin(char *email, char *pass);
 void deleteUser(char *email);
-void insereMensagem(char *email_r, char *email_d, int id, char *text, bool lida);
+void insereMensagem(int fd,char *email_r, char *email_d, int id, char *text, bool lida);
 void readMessage(int socket_fd, int id, char *email);        // Read a message from a given message id
 void printMessages(int socket_fd, char *email); //Prints all messages from a user
 void deleteMessagesRead(char *email);           //Deletes all the messages read from a user
