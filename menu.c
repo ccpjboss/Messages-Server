@@ -227,7 +227,7 @@ void menu_utilizador(int clientfd, char *email_user)
             buff2[strcspn(buff2, "\r\n")] = 0;
             strcpy(destino, buff2);
 
-            insereMensagem(email_user, destino, id, texto, false);
+            insereMensagem(clientfd,email_user, destino, id, texto, false);
             id += 1;
         }
         menu_utilizador(clientfd, email_user);
