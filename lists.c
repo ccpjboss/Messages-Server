@@ -360,8 +360,11 @@ void deleteMessagesRead(char *email) //Deletes all messages from a user, read
 			free(atual);
 			atual = anterior->proximo;
 		}
-		anterior = atual;
-		atual = atual->proximo;
+		else
+		{
+			anterior = atual;
+			atual = atual->proximo;
+		}
 	}
 	guardaMensagensFile(list);
 	free(list);
