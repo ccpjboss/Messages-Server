@@ -9,7 +9,6 @@
 #include "lists.h"
 #include <stdbool.h>
 #include "menu.h"
-int id = 0;
 
 void login(int clientfd)
 {
@@ -201,6 +200,7 @@ void menu_utilizador(int clientfd, char *email_user)
         char destino[256];
         int j;
         int k;
+        int id;
 
         char msg11[] = "Escreva a mensagem que pretende enviar\n";
         write(clientfd, msg11, sizeof(msg11));
@@ -226,9 +226,8 @@ void menu_utilizador(int clientfd, char *email_user)
             read(clientfd, buff2, sizeof(buff2));
             buff2[strcspn(buff2, "\r\n")] = 0;
             strcpy(destino, buff2);
-
+            id = getLastID() +1;
             insereMensagem(clientfd,email_user, destino, id, texto, false);
-            id += 1;
         }
         menu_utilizador(clientfd, email_user);
         break;
