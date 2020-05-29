@@ -225,6 +225,29 @@ void insereMensagem(int fd, char *email_r, char *email_d, int id, char *text, bo
 	}
 }
 
+int getLastID()
+{
+	int id;
+	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
+	inicia_lista(list);
+	leMessagesFile(list);
+
+	Mensagem_t *atual = list->cabeca_m;
+	if (atual == NULL)
+	{
+		return 0;
+	}
+
+	while (atual->proximo != NULL)
+	{
+		atual=atual->proximo;
+	}
+
+	id=atual->msgid;
+	free(list);
+	return id;
+}
+
 void readMessage(int socket_fd, int id, char *email) // Read a message from a given message id
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -261,14 +284,18 @@ void printMessages(int socket_fd, char *email) //Prints all messages from a user
 	leMessagesFile(list);
 
 	Mensagem_t *atual = list->cabeca_m;
-	char msg_to_send[281];
-	bzero(msg_to_send, 281); //Resets the buffer
+	char msg_to_send[296];
+	bzero(msg_to_send, 296); //Resets the buffer
 
 	while (atual != NULL)
 	{
-		if ((strcmp(email, atual->email_d) == 0) && (atual->lida == false))
+		if (strcmp(email, atual->email_d) == 0) 
 		{
-			sprintf(msg_to_send, "id:%d  email remetente:%s\n", atual->msgid, atual->email_r);
+			if(atual->lida == true)
+				sprintf(msg_to_send, "id:%d  email remetente:%s [Lida]\n", atual->msgid, atual->email_r);
+			else
+				sprintf(msg_to_send, "id:%d  email remetente:%s [N Lida]\n", atual->msgid, atual->email_r);
+
 			write(socket_fd, msg_to_send, sizeof(msg_to_send));
 		}
 		atual = atual->proximo;
