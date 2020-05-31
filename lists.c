@@ -5,12 +5,20 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+/*
+ *  Inicia a lista ligada com as cabecas NULL 
+ *
+ *  list: ponteiro a apontar para a nova lista 
+ */
 void inicia_lista(Lista_t *list)
 {
 	list->cabeca_m = NULL;
 	list->cabeca_u = NULL;
 }
 
+/*
+ *  Mostra todos os utilizadores. Ultilizada em DEBUG apenas 
+ */
 void printUtilizadors()
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -25,6 +33,9 @@ void printUtilizadors()
 	free(list);
 }
 
+/*
+ *  Mostrar todas as mensagens. DEBUG
+ */
 void printMensagens()
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -40,6 +51,13 @@ void printMensagens()
 	free(list);
 }
 
+/*
+ *  Verifica se o email dado ja existe
+ * 	
+ * 	email: char *email a verificar se ja existe
+ * 
+ *  returns: true se duplicado / false se nao duplicado
+ */
 bool verificaUser(char *email)
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -58,6 +76,11 @@ bool verificaUser(char *email)
 	return dup;
 }
 
+/*
+ * 	Insere um novo utilizador
+ * 
+ *  socket_fd: fd do socket para escrever mensagens para o cliente
+ */
 void insereUser(int socket_fd)
 {
 	Utilizador_t *new = (Utilizador_t *)malloc(sizeof(Utilizador_t));
@@ -111,6 +134,11 @@ void insereUser(int socket_fd)
 	}
 }
 
+/**
+ *  Apaga um utilizador.
+ * 
+ *  email: email do utilizador a apagar
+ */
 void deleteUser(char *email)
 {
 	/* Load records */
@@ -151,6 +179,14 @@ void deleteUser(char *email)
 	return;
 }
 
+/**
+ * Verifica se a palavra passe corresponde ao email inserido.
+ * 
+ * email: email inserido.
+ * pass: palavra passe inserida.
+ * 
+ * returns: true se corresponde / false se nao corresponde
+ */
 bool validLogin(char *email, char *pass)
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -182,6 +218,16 @@ bool validLogin(char *email, char *pass)
 	}
 }
 
+/**
+ * Insere uma nova mensagem.
+ * 
+ * fd: file descriptor do socket.
+ * email_r: email do remetente da mensagem.
+ * email_d: email do destinatario da mensagem.
+ * id: id da mensagem.
+ * text: texto da mensagem.
+ * lida: mensagem lida ou nao lida, valor inicial false.
+ */
 void insereMensagem(int fd, char *email_r, char *email_d, int id, char *text, bool lida)
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -195,7 +241,7 @@ void insereMensagem(int fd, char *email_r, char *email_d, int id, char *text, bo
 	if (verificaUser(email_d) == false)
 	{
 		char msg[] = "Email invalido!\n";
-		write(fd,msg,sizeof(msg));
+		write(fd, msg, sizeof(msg));
 		return;
 	}
 
@@ -225,6 +271,11 @@ void insereMensagem(int fd, char *email_r, char *email_d, int id, char *text, bo
 	}
 }
 
+/**
+ * Vai buscar o ultimo id das mensagens presentes.
+ * 
+ * returns: retorna o valor do ultimo id das mensagens.
+ */ 
 int getLastID()
 {
 	int id;
@@ -240,14 +291,21 @@ int getLastID()
 
 	while (atual->proximo != NULL)
 	{
-		atual=atual->proximo;
+		atual = atual->proximo;
 	}
 
-	id=atual->msgid;
+	id = atual->msgid;
 	free(list);
 	return id;
 }
 
+/**
+ * Le a mensagem, muda a flag lida para true.
+ * 
+ * socket_fd: file descriptor do socket.
+ * id: id da mensagem a ler.
+ * email: email do destinatario.
+ */
 void readMessage(int socket_fd, int id, char *email) // Read a message from a given message id
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -277,6 +335,12 @@ void readMessage(int socket_fd, int id, char *email) // Read a message from a gi
 	free(list);
 }
 
+/**
+ * Mostra as mensagens na caixa de entrada.
+ * 
+ * socket_fd: file descriptor do socket.
+ * email: email do destinatario das mensagens
+ */
 void printMessages(int socket_fd, char *email) //Prints all messages from a user
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -289,9 +353,9 @@ void printMessages(int socket_fd, char *email) //Prints all messages from a user
 
 	while (atual != NULL)
 	{
-		if (strcmp(email, atual->email_d) == 0) 
+		if (strcmp(email, atual->email_d) == 0)
 		{
-			if(atual->lida == true)
+			if (atual->lida == true)
 				sprintf(msg_to_send, "id:%d  email remetente:%s [Lida]\n", atual->msgid, atual->email_r);
 			else
 				sprintf(msg_to_send, "id:%d  email remetente:%s [N Lida]\n", atual->msgid, atual->email_r);
@@ -308,6 +372,11 @@ void printMessages(int socket_fd, char *email) //Prints all messages from a user
 	}
 }
 
+/**
+ * Apaga as mensagens de um utlizador. Usada quando é apagado um user.
+ * 
+ * email: email do utilizador apagado.
+ */ 
 void deleteMessagesUser(char *email) //Deletes all the messages from a user
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -347,6 +416,11 @@ void deleteMessagesUser(char *email) //Deletes all the messages from a user
 	free(list);
 }
 
+/**
+ * Apaga as mensagens lidas de um utilizador.
+ * 
+ * email: email do utilizador.
+ */
 void deleteMessagesRead(char *email) //Deletes all messages from a user, read
 {
 	Lista_t *list = (Lista_t *)malloc(sizeof(Lista_t));
@@ -405,6 +479,11 @@ void deleteMessagesRead(char *email) //Deletes all messages from a user, read
 	return;
 }
 
+/**
+ * Le o ficheiro das mensagens para carregar a lista ligada.
+ * 
+ * list: lista ligada para guardar os dados lidos
+ **/ 
 void leMessagesFile(Lista_t *list)
 {
 	Mensagem_t *atual = list->cabeca_m;
@@ -457,6 +536,11 @@ void leMessagesFile(Lista_t *list)
 	return;
 }
 
+/**
+ * Le o ficheiro dos utilizadores para carregar a lista ligada.
+ * 
+ * list: lista ligada para guardar os dados lidos
+ **/ 
 void leUserFile(Lista_t *list)
 {
 	Utilizador_t *atual = list->cabeca_u;
@@ -505,6 +589,11 @@ void leUserFile(Lista_t *list)
 	return;
 }
 
+/**
+ * Escreve a lista ligada no ficheiro
+ * 
+ * list: lista a escrever
+ */
 void guardaMensagensFile(Lista_t *list) //Escreve a lista das mensagens no ficheiro
 {
 	Mensagem_t *atual = list->cabeca_m;
@@ -533,6 +622,11 @@ void guardaMensagensFile(Lista_t *list) //Escreve a lista das mensagens no fiche
 	return;
 }
 
+/**
+ * Escreve a lista ligada no ficheiro
+ * 
+ * list: lista a escrever
+ */
 void guardaUsersFile(Lista_t *list) //Escreve a lista dos users no ficheiro
 {
 	Utilizador_t *atual = list->cabeca_u;
